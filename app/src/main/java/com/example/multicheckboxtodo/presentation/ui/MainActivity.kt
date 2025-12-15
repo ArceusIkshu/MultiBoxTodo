@@ -1,47 +1,53 @@
 package com.example.multicheckboxtodo.presentation.ui
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import com.example.multicheckboxtodo.data.database.TodoDatabase
 import com.example.multicheckboxtodo.presentation.theme.MultiCheckBoxTodoTheme
+import com.example.multicheckboxtodo.presentation.viewmodel.TodoViewModel
+
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            MultiCheckBoxTodoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
+    private val db by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            TodoDatabase::class.java,
+            name = "todo_database"
+        ).build()
+    }
+
+    private val viewModel by viewModels<TodoViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return TodoViewModel(db.dao) as T
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
     )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MultiCheckBoxTodoTheme {
-        Greeting("Android")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MultiCheckBoxTodoTheme {
+                Scaffold(modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        AddTodoBottomBar(viewModel = viewModel)
+                    }) { innerPadding ->
+                    TodoScreen(modifier = Modifier.padding(innerPadding), viewModel = viewModel)
+                }
+            }
+        }
     }
 }
