@@ -1,6 +1,5 @@
-package com.example.multicheckboxtodo.ui.theme
+package com.example.multicheckboxtodo.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

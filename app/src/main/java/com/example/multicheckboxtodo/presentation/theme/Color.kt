@@ -1,4 +1,4 @@
-package com.example.multicheckboxtodo.ui.theme
+package com.example.multicheckboxtodo.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
